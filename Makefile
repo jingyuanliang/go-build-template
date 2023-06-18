@@ -44,6 +44,10 @@ VERSION ?= $(shell git describe --tags --always --dirty)
 # Set this to 1 to build a debugger-friendly binaries.
 DBG ?=
 
+# Username and password for manifest-tool.
+MANIFEST_USERNAME ?= oauth2accesstoken
+MANIFEST_PASSWORD ?= $$(gcloud auth print-access-token)
+
 ###
 ### These variables should not need tweaking.
 ###
@@ -332,8 +336,8 @@ manifest-list: all-push
 	for bin in $(BINS); do                                    \
 	    platforms=$$(echo $(ALL_PLATFORMS) | sed 's/ /,/g');  \
 	    bin/tools/manifest-tool                               \
-	        --username=oauth2accesstoken                      \
-	        --password=$$(gcloud auth print-access-token)     \
+	        --username=$(MANIFEST_USERNAME)                   \
+	        --password=$(MANIFEST_PASSWORD)                   \
 	        push from-args                                    \
 	        --platforms "$$platforms"                         \
 	        --template $(REGISTRY)/$$bin:$(VERSION)__OS_ARCH  \
